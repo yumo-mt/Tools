@@ -1,0 +1,76 @@
+html,
+body {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	width: 100%;
+}
+
+#box {
+	overflow: hidden;
+	position: relative;
+}
+
+#list {
+	position: absolute;
+	top: 0;
+	font-size: 500px;
+}
+
+#list div {
+	overflow: hidden;
+	position: relative;
+}
+
+.spot {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	position: fixed;
+	right: 20px;
+	z-index: 999;
+	top: 40%;
+}
+
+.spot li {
+	height: 15px;
+	width: 15px;
+	margin-bottom: 15px;
+	border-radius: 50%;
+	background: white;
+}
+
+.spot li.tar {
+	background: red;
+}
+
+.box-2 .col-1 {
+	font-size: 50px;
+	height: 100px;
+	width: 300px;
+	margin: 100px auto;
+	text-align: center;
+	background: darkblue;
+	opacity: 0;
+}
+
+.show .col-1-animate {
+	animation: box-2-col-1 1s;
+	animation-delay: 600ms;
+	animation-fill-mode: forwards;
+}
+
+.box-2-col-2 {
+	background: darkmagenta;
+	height: 100px;
+	width: 20px;
+	position: absolute;
+	left: 50px;
+	opacity: 0;
+}
+
+.show .box-2-col-2-animate {
+	animation: box-2-col-2 1s;
+	animation-delay: 600ms;
+	animation-fill-mode: forwards;
+}

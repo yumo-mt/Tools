@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+	</body>
+	<!--<script src="new_file.js" type="text/javascript" charset="utf-8"></script>-->
+	<script src="jsonp.js" type="text/javascript" charset="utf-8"></script>
+	
+	<script type="text/javascript">
+		jsonp('http://suggestion.baidu.com/su',{wd: 'aa'}, 'cb', function (data) {callback(data);});
+	 
+	 	function callback(data){
+	 		console.log(data);
+	 	}
+	</script>
+</html>

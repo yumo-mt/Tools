@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>格式化时间</title>
+	</head>
+
+	<body>
+	</body>
+	<script type="text/javascript">
+		//  一个字符串可以生成各种格式的时间和取出想要的时间部分
+		/**这个方法扩展到内置类的原型上
+		 * 模板有5种格式，可以传入对应的number使用对应的模板，也可以自定义模板
+		 * 模板为字符串类型，格式为 {0}.{1}.{2}.{3}.{4}.{5} 依次为年月日时分秒
+		 * @param {Object} pro
+		 */
+		(function(pro) {
+			pro.myFormatTime = myFormatTime;
+
+			function myFormatTime(template) {
+				var temAry = {
+						1: "{0}年{1}月{2}日{3}时{4}分{5}秒",
+						2: "{0}-{1}-{2} {3}:{4}:{5}",
+						3: "{0}-{1}-{2} {3}-{4}-{5}",
+						4: "{3}时{4}分{5}秒{0}年{1}月{2}日",
+						5: "{3}:{4}:{5} {0}-{1}-{2}"
+					}
+					//this就是需要吃力并且进行格式化的时间字符串
+				var ary = this.match(/\d+/g);
+				//格式化事件的模板
+				if (typeof template === 'number') {
+					template = temAry[template]
+				} else if (typeof template === 'undefined') {
+					template = temAry[1]
+				} else {
+					template = template;
+				}
+				var res = null;
+				res = template.replace(/\{(\d+)\}/g, function() {
+					var val = ary[arguments[1]];
+					!val ? val = '00' : null;
+					val.length < 2 ? val = '0' + val : null;
+					return val;
+				})
+				return res;
+			}
+		})(String.prototype)
+	</script>
+
+</html>

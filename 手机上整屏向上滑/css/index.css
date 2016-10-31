@@ -1,0 +1,31 @@
+html,body{
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+}
+.box{
+	height: 100%;
+	width: 100%;
+	background: lavender;
+	position: relative;
+}
+.box .wrap{
+	width: 100%;
+	position: absolute;
+	top:0;
+}
+.box .wrap div{
+	font-size: 1rem;
+width: 100%;}
+.box .wrap div:nth-child(1){
+	background: lawngreen;
+}
+.box .wrap  div:nth-child(2){
+	background: lightcoral;
+}
+.box .wrap div:nth-child(3){
+	background: lightgreen;
+}
+.box .wrap  div:nth-child(4){
+	background: lightseagreen;
+}

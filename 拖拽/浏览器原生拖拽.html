@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+	</head>
+	<style type="text/css">
+		#div1 {
+			height: 100px;
+			width: 100px;
+			background: darkcyan;
+			position: absolute;
+			top: 0;
+			left: 0;
+			cursor: move;
+		}
+	</style>
+
+	<body>
+		<div id="div1" draggable="true">
+
+		</div>
+	</body>
+	<script type="text/javascript">
+		var ele = document.getElementById("div1")
+			//原生的浏览器拖拽事件每只完成了事件（值发布了事件），没有实现具体的代码
+			//		ele.ondragstart;  拖拽开始
+			//		ele.ondrag;  拖拽中
+			//		ele.ondragend;  拖拽结束
+
+		ele.ondragstart = function(e) {
+			this.x = this.offsetLeft;
+			this.y = this.offsetTop;
+			this.mx = e.pageX;
+			this.my = e.pageY;
+			//事件的是就不用再在这里具体实现了，浏览器的事件发布机制们已经把事件组装好了
+		};
+		ele.ondrag = function(e) {
+			this.style.left = this.x + e.pageX - this.mx + 'px';
+			this.style.top = this.y + e.pageY - this.my + 'px';
+		}
+		ele.ondragend = function(e) {
+			this.style.left = this.x + e.pageX - this.mx + 'px';
+			this.style.top = this.y + e.pageY - this.my + 'px';
+		}
+	</script>
+
+</html>

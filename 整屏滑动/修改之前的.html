@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset='utf-8'>
+		<title>整屏滚动</title>
+	</head>
+
+	<body>
+		<style>
+			html,
+			body {
+				margin: 0;
+				padding: 0;
+				height: 100%;
+				width: 100%;
+			}
+			
+			#box {
+				overflow: hidden;
+				position: relative;
+			}
+			
+			#list {
+				position: absolute;
+				top: 0;
+				font-size: 500px;
+			}
+		</style>
+
+		<div id="box">
+			<div id="list">
+				<div style="background: lawngreen;">1</div>
+				<div style="background: lightcoral;">2</div>
+				<div style="background: lightseagreen;">3</div>
+				<div style="background: yellow;">4</div>
+				<div style="background: red">5</div>
+			</div>
+		</div>
+		<script src="http://demo.hairecord.com/tween.js" type="text/javascript" charset="utf-8"></script>
+<script>
+		
+		
+			
+		
+		
+		
+			var oBox = document.getElementById("box");
+			var List = document.getElementById("list");
+			var sTop = (document.documentElement.clientHeight || document.body.clientHeight);
+			oBox.style.height = (document.documentElement.clientHeight || document.body.clientHeight) + 'px';
+			oBox.style.width = (document.documentElement.clientWidth || document.body.clientWidth) + 'px';
+			var oDivs = oBox.getElementsByTagName('div');
+			for (var i = 0; i < oDivs.length; i++) {
+				oDivs[i].style.height = (document.documentElement.clientHeight || document.body.clientHeight) + 'px';
+				oDivs[i].style.width = (document.documentElement.clientWidth || document.body.clientWidth) + 'px';
+			}
+			list.style.height = oDivs[0].offsetHeight * oDivs.length + 'px';
+			var flag = true;
+			var temp = null;
+			var step = 0;
+			function addEvent(obj, xEvent, fn) {
+				if (obj.attachEvent) {
+					obj.attachEvent('on' + xEvent, fn);
+				} else {
+					obj.addEventListener(xEvent, fn, false);
+				}
+			};
+			addEvent(document, 'mousewheel', move);
+			addEvent(document, 'DOMMouseScroll', move);
+
+			function move(e) {
+				e = e || window.event;
+				e.stopPropagation ? e.stopPropagation() : e.cancelBubble = true
+				e.preventDefault ? e.preventDefault() : e.returnValue = false;
+				if (!flag) {
+					return;
+				}
+				temp = e.wheelDelta ? e.wheelDelta < 0 : e.detail > 0;
+				temp = e.wheelDelta ? e.wheelDelta : e.detail;
+				
+				
+				if (e.wheelDelta) {
+					if (temp < 0) {
+						step > -4 ? step-- : step = -4;
+					} else {
+						step++;
+						if (step > 0) {
+							step = 0
+						}
+					}
+				} else {
+					if (temp > 0) {
+						step > -4 ? step-- : step = -4;
+					} else {
+						step++;
+						if (step > 0) {
+							step = 0
+						}
+					}
+				}
+				
+				
+				animate(list, {
+					top: step * sTop
+				}, 600, 2)
+
+				flag = false;
+				setTimeout(function() {
+					flag = true;
+				}, 1000)
+			};
+		</script>
+	</body>
+
+<html>

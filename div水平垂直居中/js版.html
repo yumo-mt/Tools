@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<style type="text/css">
+	*{padding: 0;margin: 0;}
+		#box{height: 200px;width: 200px; border: 1px solid darkblue; position: absolute;}
+	</style>
+	<body>
+		<div id="box"></div>
+	</body>
+	<script type="text/javascript">
+		var winW =document.documentElement.clientWidth||document.body.clientWidth;
+		var winH =document.documentElement.clientHeight||document.body.clientHeight;
+		var box = document.getElementById("box")
+		var boxW = box.offsetWidth;
+		var boxH =box.offsetHeight;
+		box.style.left = (winW-boxW)/2+'px';
+		box.style.top = (winH-boxH)/2+'px';
+	</script>
+</html>

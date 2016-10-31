@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script type="text/javascript">
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 320 * 100 + 'px'
+		</script>
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+		<link rel="stylesheet" type="text/css" href="css/reset.min.css" />
+		<title></title>
+	</head>
+
+	<body>
+		<section class="box">
+			<div class="wrap">
+				<div>1</div>
+				<div>2</div>
+				<div>3</div>
+				<div>4</div>
+			</div>
+		</section>
+	</body>
+	<script src="js/tween.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		var winH = document.documentElement.clientHeight;
+		var box = document.querySelector('.box');
+		var wrap = document.querySelector('.wrap');
+		var Divs = wrap.querySelectorAll('div');
+		var step = 0;
+		wrap.style.height = Divs.length * winH + 'px';
+		for (var i = 0; i < Divs.length; i++) {
+			Divs[i].style.height = winH + 'px'
+		}
+		box.addEventListener('touchstart', touchstart, false)
+		box.addEventListener('touchmove', touchmove, false)
+		box.addEventListener('touchend', touchend, false)
+
+		function touchstart(ev) {
+			var touch = ev.touches;
+			this.startY = touch[0].pageY;
+		}
+
+		function touchmove(ev) {
+			var touch = ev.touches;
+			this.moveY = touch[0].pageY;
+		}
+
+		function touchend(ev) {
+			var touch = ev.touches;
+			var flag = swiperDir(this.startY, this.moveY);
+			if (flag === 'up') {
+				if (step > Divs.length - 2) return;
+
+				step++;
+				animate(wrap, {
+					top: -step * winH
+				}, 300, 24)
+			}
+			if (flag === 'down') {
+				if (step < 1) return;
+				step--;
+				animate(wrap, {
+					top: -step * winH
+				}, 300, 24)
+				console.log(2)
+			}
+		}
+
+		function swiperDir(startY, moveY) {
+			if (Math.abs(moveY - startY) > 30) {
+				if (moveY - startY > 30) {
+					return 'down'
+				}
+				if (moveY - startY < -30) {
+					return 'up'
+				}
+			}
+		}
+	</script>
+
+</html>

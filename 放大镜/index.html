@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>放大镜</title>
+		<style type="text/css">
+			html,
+			body {
+				height: 100%;
+				width: 100%;
+			}
+			
+			* {
+				margin: 0;
+				padding: 0;
+				list-style: none;
+			}
+			
+			#box {
+				height: 169px;
+				width: 300px;
+				position: relative;
+				margin: 50px auto;
+			}
+			
+			#mask {
+				position: absolute;
+				left: 0;
+				top: 0;
+				background: deeppink;
+				height: 100px;
+				width: 100px;
+				opacity: 0.5;
+				filter: alpha(opacity=50);
+			}
+			
+			#show {
+				width: 300px;
+				height: 200px;
+				position: absolute;
+				right: -400px;
+				top: 0;
+				background: darkblue;
+				overflow: hidden;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="box" id="box">
+			<img src="img/123.jpg" />
+		</div>
+	</body>
+	<script type="text/javascript">
+		var box = document.getElementById("box");
+		box.addEventListener('mouseenter', start, false);
+		box.addEventListener('mousemove', move, false);
+		box.addEventListener('mouseleave', end, false);
+
+		function start(e) {
+			e = mouseEvent(e);
+			var oMask = document.createElement('div');
+			oMask.id = 'mask';
+
+			box.appendChild(oMask);
+			var oShow = document.createElement('div');
+			oShow.id = 'show';
+			oShow.style.background = 'url(img/123big.jpg)';
+			this.appendChild(oShow)
+			this.appendChild(oMask);
+		}
+
+		function move(e) {
+			var oMask = document.getElementById("mask");
+			var oShow = document.getElementById("show");
+			var maxLeft = this.offsetWidth - oMask.offsetWidth;
+			var maxBottom = this.offsetHeight - oMask.offsetHeight;
+			var x = e.clientX - this.offsetLeft - oMask.offsetWidth / 2;
+			var y = e.clientY - this.offsetTop - oMask.offsetHeight / 2;
+			if (oMask) {
+				if (x <= 0) { 
+					oMask.style.left = 0
+				} else if (x >= maxLeft) {
+					oMask.style.left = maxLeft + 'px';
+				} else {
+					oMask.style.left = e.clientX - this.offsetLeft - oMask.offsetWidth / 2 + 'px';
+				};
+				if (y <= 0) {
+					oMask.style.top = 0
+				} else if (y >= maxBottom) {
+					oMask.style.top = maxBottom + 'px';
+				} else {
+					oMask.style.top = e.clientY - this.offsetTop - oMask.offsetHeight / 2 + 'px';
+				}
+			};
+			var x2 = oMask.offsetTop / 69 * 100;
+			var y2 = oMask.offsetLeft / 200 * 100;
+			x2 = parseInt(x2).toString();
+			y2 = parseInt(y2).toString();
+			oShow.style.backgroundPosition = y2 + '% ' + x2 + '%';
+		}
+
+		function end(e) {
+			var oMask = document.getElementById("mask");
+			var oShow = document.getElementById("show");
+			this.removeChild(oMask)
+			this.removeChild(oShow)
+
+		}
+
+		function mouseEvent(e) {
+			e = e || window.event;
+			if (typeof e.pageX === 'undefined') {
+				e.pageX = e.clientX + (document.documentElement.scrollTop || document.body.scrollTop);
+				e.pageY = e.clientY + (document.documentElement.scrollLeft || document.body.scrollLeft);
+				e.preventDefault = function() {
+					return e.cancelBubble = true;
+				}
+				e.stopPropagation = function() {
+					return e.returnValue = false;
+				}
+			}
+			return e;
+		}
+	</script>
+
+</html>

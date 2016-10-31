@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			* {
+				padding: 0;
+				margin: 0;
+			}
+			
+			.box {
+				height: 100px;
+				width: 500px;
+				margin: 100px auto;
+				overflow: hidden;
+				position: relative;
+			}
+			
+			.box ul {
+				overflow: hidden;
+				position: absolute;
+				left: 0;
+			}
+			
+			.box ul li {
+				float: left;
+				list-style: none;
+				height: 100px;
+				width: 100px;
+				background: darkcyan;
+			}
+			
+			.box ul li img {
+				height: inherit;
+				width: inherit;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="box" id="box">
+			<ul>
+				<li><img src="http://h.hiphotos.baidu.com/zhidao/pic/item/c8177f3e6709c93d0f5f00e79b3df8dcd1005474.jpg" /></li>
+				<li><img src="http://ww1.sinaimg.cn/crop.3.45.1919.1919.1024/6b805731jw1em0hze051hj21hk1isn5k.jpg" /></li>
+				<li><img src="http://f.hiphotos.baidu.com/zhidao/pic/item/0dd7912397dda14408ea98f2b4b7d0a20df4868b.jpg" /></li>
+				<li><img src="http://ww2.sinaimg.cn/crop.0.0.1080.1080.1024/a1e54d0bjw8encfl7hv68j20u00u0jt6.jpg" /></li>
+				<li><img src="http://www.onegreen.net/QQ/UploadFiles/201408/20140826111120181.jpg" /></li>
+			</ul>
+		</div>
+	</body>
+	<script type="text/javascript">
+		var oBox = document.getElementById("box");
+		var oUl = box.getElementsByTagName('ul')[0];
+		oUl.innerHTML += oUl.innerHTML;
+		var oLis = oUl.getElementsByTagName('li');
+		oUl.style.width = oLis.length * oLis[0].offsetWidth + 'px';
+		var timer = null;
+		timer = setInterval(move, 10);
+		oBox.onmouseover = function() {
+			clearInterval(timer);
+		};
+		oBox.onmouseout = function() {
+			timer = setInterval(move, 10);
+		}
+
+		function move() {
+			oUl.style.left = oUl.offsetLeft - 2 + 'px';
+			if (-oUl.offsetLeft >= oUl.offsetWidth / 2) {
+				oUl.style.left = 0;
+			}
+		}
+	</script>
+
+</html>

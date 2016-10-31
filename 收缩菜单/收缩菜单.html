@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+				font-family: "\5FAE\8F6F\96C5\9ED1", Helvetica, sans-serif;
+				font-size: 14px;
+				color: #424242;
+			}
+			
+			ul,
+			li {
+				list-style: none;
+			}
+			
+			.nav {
+				margin: 20px auto;
+				width: 150px;
+				border: 1px solid green;
+				border-top: none;
+			}
+			
+			.navFir {}
+			
+			.navFir h2 {
+				height: 35px;
+				line-height: 35px;
+				background: #E0F2BE;
+				cursor: pointer;
+				border-top: 1px solid green;
+				text-indent: 10px;
+			}
+			
+			.navTwo {
+				display: none;
+				margin-left: 20px;
+			}
+			
+			.navTwo li {
+				height: 35px;
+				line-height: 35px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<ul class="nav">
+			<li class="navFir">
+				<h2>衬衫</h2>
+				<ul class="navTwo" style="display: block;">
+					<li>短袖衬衫</li>
+					<li>长袖衬衫</li>
+					<li>男款衬衫</li>
+					<li>女款衬衫</li>
+				</ul>
+			</li>
+			<li class="navFir">
+				<h2>衬衫</h2>
+				<ul class="navTwo">
+					<li>短袖衬衫</li>
+					<li>长袖衬衫</li>
+					<li>男款衬衫</li>
+					<li>女款衬衫</li>
+				</ul>
+			</li>
+			<li class="navFir">
+				<h2>衬衫</h2>
+				<ul class="navTwo">
+					<li>短袖衬衫</li>
+					<li>长袖衬衫</li>
+					<li>男款衬衫</li>
+					<li>女款衬衫</li>
+				</ul>
+			</li>
+			<li class="navFir">
+				<h2>衬衫</h2>
+			</li>
+		</ul>
+
+	</body>
+	<script type="text/javascript">
+		var oH2s = document.getElementsByTagName('h2');
+		for (var i = 0; i < oH2s.length; i++) {
+			(function(i) {
+				oH2s[i].onclick = function() {
+					var oUl = oH2s[i].nextElementSibling;
+					if (oUl) {
+						var aa = window.getComputedStyle(oUl, null).display;
+						if (aa == 'none') {
+							oUl.style.display = 'block';
+						} else {
+							oUl.style.display = 'none';
+						}
+					}
+				}
+			})(i)
+		}
+	</script>
+
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>获得url的参数</title>
+	</head>
+
+	<body>
+		<script type="text/javascript">
+			//->第一种解决方案:字符串的截取和拼接
+			var str = window.location.href;
+			var strIndex = str.indexOf("?"),
+				endIndex = str.lastIndexOf("#"),
+				resStr = "";
+			if (strIndex > -1) {
+				if (endIndex === -1) {
+					resStr = str.substring(strIndex + 1);
+				} else {
+					resStr = str.substring(strIndex + 1, endIndex);
+				}
+			}
+			var ary = resStr.split("&"),
+				obj = {};
+			for (var i = 0; i < ary.length; i++) {
+				var cur = ary[i],
+					curAry = cur.split("=");
+				obj[curAry[0]] = curAry[1];
+			}
+			//第二种正则的方式
+			var obj = {};
+			str.replace(/([^?=&#]+)=([^?=&#]+)/g, function() {
+				obj[arguments[1]] = arguments[2];
+			});
+			//第三种，腾讯体育的方式
+			var url = location.search,
+				params = {};
+			if (url.indexOf("?") != -1) {
+				var str = url.substr(1);
+				var strs = str.split("&");
+				for (var i = 0; i < strs.length; i++) {
+					params[strs[i].split("=")[0]] = strs[i].split("=")[1];
+				}
+			}
+		</script>
+	</body>
+
+</html>

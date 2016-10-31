@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset='utf-8'>
+		<title>整屏滚动</title>
+	</head>
+	<link rel="stylesheet" type="text/css" href="css/animate.css" />
+	<link rel="stylesheet" type="text/css" href="css/index.css"/>
+	<body>
+			<div id="box">
+			<div id="list">
+				<div class="list-son box-1" style="background: lightblue;">1</div>
+				<div class="list-son box-2" style="background: lightgreen;">
+					<div class="col-1 col-1-animate" id="col">2</div>
+					<div class="box-2-col-2 box-2-col-2-animate"></div>
+				</div>
+				<div class="list-son box-3" style="background: lightseagreen;">3</div>
+				<div class="list-son box-4" style="background: lightskyblue;">4</div>
+				<div class="list-son box-5" style="background: darkviolet">5</div>
+			</div>
+			<ul class="spot" id="spot">
+				<li class="tar"></li>
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+			</ul>
+		</div>
+		<script src="js/utils.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			var col = document.getElementById("col");
+			function checkPosition(ele) {
+				var PosStep = Math.abs(step) + 1;
+				switch (PosStep) {
+					case 1:
+						boxAddShow(PosStep)
+						break;
+					case 2:
+						boxAddShow(PosStep)
+						break;
+					case 3:
+						boxAddShow(PosStep)
+						break;
+					case 4:
+						boxAddShow(PosStep)
+						break;
+					case 5:
+						boxAddShow(PosStep)
+						break;
+				}
+			}
+			function boxAddShow(num) {
+				console.log(num)
+				for (var i = 0; i < oDivs.length; i++) {
+					utils.removeClass(oDivs[i], 'show')
+				}
+				utils.addClass(oDivs[num - 1], 'show')
+			}
+		</script>
+		<script src="js/tween.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/index.js" type="text/javascript" charset="utf-8"></script>
+
+	</body>
+
+</html>

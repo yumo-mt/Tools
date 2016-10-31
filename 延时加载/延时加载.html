@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="http://demo.hairecord.com/reset.css" />
+
+		<style type="text/css">
+			img {
+				height: 200px;
+				width: 200px;
+				display: block;
+			}
+		</style>
+	</head>
+
+	<body style="height: 3000px;">
+		<p style="height: 2000px;"></p>
+		<img src="img/default.gif" readsrc='img/123.jpg' />
+		<img src="img/default.gif" readsrc='img/123.jpg' />
+		<img src="img/default.gif" readsrc='img/123.jpg' />
+		<img src="img/default.gif" readsrc='img/123.jpg' />
+		<img src="img/default.gif" readsrc='img/123.jpg' />
+	</body>
+	<script src="../整屏滑动/js/utils.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		var imgList = document.getElementsByTagName('img');
+		var bodyCh = document.documentElement.clientHeight || document.body.clientHeight;
+		window.onscroll = function() {
+			for (var i = 0; i < imgList.length; i++) {
+				(function(i) {
+					show(imgList[i])
+				})(i)
+			}
+		}
+
+		function show(ele) {
+			var bodyst = document.documentElement.scrollTop || document.body.scrollTop;
+			console.log(utils.offset(ele).top, bodyst, bodyCh)
+			if (utils.offset(ele).top < (bodyst + bodyCh - 100)) {
+				var temp = ele.getAttribute('readsrc');
+				console.log(temp)
+				var imgTemp = new Image;
+				imgTemp.src = temp;
+				imgTemp.onload = function() {
+					ele.src = temp;
+				}
+			}
+		}
+	</script>
+
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			#div1{height: 100px;width: 50px; background: darkcyan; position: fixed; right: 0; bottom: 100px;}
+		</style>
+	</head>
+	<body style="height: 5000px;">
+		<div id="div1">
+			
+		</div>
+		
+	</body>
+	<script type="text/javascript">
+		var box = document.getElementById("div1");
+		var timer = null;
+		box.onclick = function(){
+			clearInterval(timer);
+			timer = setInterval(function(){
+				document.body.scrollTop = document.body.scrollTop -100; 
+				if(document.body.scrollTop ==0){
+					clearInterval(timer);
+				}
+			},10)
+		}
+	</script>
+</html>

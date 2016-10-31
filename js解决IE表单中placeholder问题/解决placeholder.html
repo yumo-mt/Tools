@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link charset="utf-8" type="text/css" rel="stylesheet" href="css/reset.min.css"/>
+    <style type="text/css">
+        input {
+            display: block;
+        }
+
+        .box {
+            position: relative;
+            margin: 20px auto;
+            width: 300px;
+        }
+
+        #userEmail {
+            padding: 0 5px 0 35px;
+            width: 258px;
+            height: 28px;
+            line-height: 28px;
+            border: 1px solid #ccc;
+        }
+
+        #userEmailIcon {
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            width: 28px;
+            height: 28px;
+            background: lightblue;
+        }
+
+        #userEmailTip {
+            display: none;
+            position: absolute;
+            top: 1px;
+            left: 35px;
+            width: 258px;
+            height: 30px;
+            line-height: 30px;
+            color: #999;
+        }
+		#userEmailIcon img{height:100%;width:100%}
+    </style>
+</head>
+<body>
+<div class="box">
+    <input type="text" id="userEmail" placeholder="请输入您常用的邮箱！"/>
+    <span id="userEmailIcon"><img src="http://www.iconpng.com/png/messenger/en-ligne.png"/></span>
+    <span id="userEmailTip">请输入您常用的邮箱！</span>
+</div>
+<script type="text/javascript">
+    ~function () {
+        var userEmail = document.getElementById("userEmail"),
+                userEmailTip = document.getElementById("userEmailTip");
+
+        //->处理IE对PLACEHOLDER不兼容的问题
+        if (/MSIE/i.test(navigator.userAgent)) {
+            //1)把在HTML结构中设置的值清空,然后在把我们设定的提示显示
+            userEmail.placeholder ? userEmail.placeholder = "" : null;
+            userEmailTip.style.display = "block";
+
+            //2)点击提示信息也让文本框获取到光标
+            userEmailTip.onclick = function () {
+                userEmail.focus();
+            };
+
+            //3)在键盘操作的时候判断文本框中是否存在内容,存在的话隐藏提示,反之显示提示信息
+            userEmail.onkeyup = userEmail.onkeydown = function (ev) {
+                var val = this.value;
+                userEmailTip.style.display = val.length === 0 ? "block" : "none";
+            };
+        }
+    }();
+
+
+</script>
+</body>
+</html>

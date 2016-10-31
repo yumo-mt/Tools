@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>就差解决ie的问题了</title>
+		<style>
+			div {
+				height: 100px;
+				width: 100px;
+				position: absolute;
+				top: 0;
+				left: 0;
+				background: darkcyan;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="box"></div>
+		<div id="box2" style="left: 500px"></div>
+	</body>
+	<script type="text/javascript">
+		function EventEmitter() {}
+		EventEmitter.prototype.on = function(that,type, fn) {
+			console.log(this)//构造函数Drap
+			console.log(that)//实例
+			var _this = that;
+			var runThis = this;//构造函数Drap
+			console.log(runThis)
+			if('addEventListener' in _this) {
+				_this.addEventListener(type, fn, false)
+			} else {
+				if(!_this['event' + type]) {
+					_this['event' + type] = [];
+					_this.attachEvent('on' + type, function() {
+						runThis.run.call(_this)
+					})
+					console.log('-----------------')
+				} else {
+					var cur = _this['event' + type];
+					for(var key in cur) {
+						if(key == fn) {
+							return;
+						}
+					}
+					_this['event' + type].push(fn)
+				}
+			}
+		}
+		EventEmitter.prototype.off = function(that,type, fn) {
+			if('removeEventListener' in that) {
+				that.removeEventListener(type, fn, false);
+			} else {
+				var cur = that['event' + type];
+				if(cur) {
+					for(var i = 0; i < cur.length; i++) {
+						var a = cur[i];
+						if(a == fn) {
+							cur[i] = null;
+							return;
+						}
+					}
+				}
+			}
+		}
+		EventEmitter.prototype.run = function() {
+			var e = window.event || e;
+			
+			var type = e.type;
+			e.target = e.srcElement;
+			e.preventDefault = function() {
+				e.returnValue = false;
+			}
+			e.stopPropagation = function() {
+				e.cancelBubble = true;
+			}
+			console.log(this)
+			var cur = 	;
+			console.log(cur+'000')
+			for(var i = 0, len = cur.length; i < len; i++) {
+				var a = cur[i];
+				if(typeof a == 'function') {
+					a.call(this, e)
+				} else {
+					cur.splice(i, 1);
+					i--;
+				}
+			}
+		};
+		function Drap(ele) {
+			this.ele = ele;
+			this.x = null;
+			this.y = null;
+			this.mx = null;
+			this.my = null;
+			var that = this;
+			this.DOWN = function(e) {
+				that.down.call(that, e)
+			};
+			this.MOVE = function(e) {
+				that.move.call(that, e)
+			}
+			this.UP = function(e) {
+				that.up.call(that, e)
+			}
+			var p = new EventEmitter();
+			for(var attr in p) {
+				this[attr] = p[attr]
+			}
+			this.on.call(this,this.ele, 'mousedown', this.DOWN);
+		}
+		Drap.prototype.down = function(e) {
+			console.log(1)
+			this.x = this.ele.offsetLeft;
+			this.y = this.ele.offsetTop;
+			this.mx = e.pageX;
+			this.my = e.pageY;
+			if(this.ele.setCapture) {
+				ele.setCapture();
+				this.on(this.ele, 'mousemove', this.MOVE);
+				this.on(this.ele, 'mouseup', this.UP);
+			} else {
+				this.on(document, 'mousemove', this.MOVE);
+				this.on(document, 'mouseup', this.UP);
+			}
+		}
+		Drap.prototype.move = function(e) {
+			this.ele.style.left = e.pageX - (this.mx - this.x) + 'px';
+			this.ele.style.top = e.pageY - (this.my - this.y) + 'px';
+		}
+		Drap.prototype.up = function() {
+			if(this.ele.releaseCapture) {
+				this.ele.releaseCapture();
+				this.off.call(this,this.ele, 'mousemove', this.MOVE)
+				this.off.call(this,this.ele, 'mouseup', this.UP)
+			} else {
+				this.off.call(document,document, 'mousemove', this.MOVE);
+				this.off.call(document,document, 'mousup', this.UP);
+			}
+		}
+		var box = document.getElementsByTagName('div');
+		for(var i = 0; i < box.length; i++) {
+			var a = new Drap(box[i]);
+		}
+
+		/*function on(ele, type, fn) {
+			if('addEventListener' in ele) {
+				ele.addEventListener(type, fn, false)
+			} else {
+				if(!ele['event' + type]) {
+					ele['event' + type] = [];
+					ele.attachEvent('on' + type, function() {
+						run.call(ele)
+					})
+				} else {
+					var cur = ele['event' + type];
+					for(var key in cur) {
+						if(key == fn) {
+							return;
+						}
+					}
+					ele['event' + type].push(fn)
+				}
+			}
+		}
+
+		function run(e) {
+			var e = window.event || e;
+			e.target = e.srcElement;
+			e.preventDefault = function() {
+				e.returnValue = false;
+			}
+			e.stopPropagation = function() {
+				e.cancelBubble = true;
+			}
+			var cur = this['event' + type];
+			for(var i = 0, len = cur.length; i < len; i++) {
+				var a = cur[i];
+				if(typeof a == 'function') {
+					a.call(this, e)
+				} else {
+					cur.splice(i, 1);
+					i--;
+				}
+			}
+		}
+
+		function off(ele, type, fn) {
+			if('removeEventListener' in ele) {
+				ele.removeEventListener(type, fn, false);
+			} else {
+				var cur = ele['event' + type];
+				if(cur) {
+					for(var i = 0; i < cur.length; i++) {
+						var a = cur[i];
+						if(a == fn) {
+							cur[i] = null;
+							return;
+						}
+					}
+				}
+			}
+		}*/
+	</script>
+
+</html>

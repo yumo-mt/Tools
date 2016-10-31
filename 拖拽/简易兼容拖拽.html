@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>拖拽简版 全兼容</title>
+	</head>
+	<style type="text/css">
+		html,
+		body {
+			height: 100%;
+			width: 100%;
+		}
+		#box {
+			height: 100px;
+			width: 100px;
+			background: darkcyan;
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+	</style>
+	<body>
+		<div id="box"></div>
+	</body>
+	<script type="text/javascript">
+		var box = document.getElementById("box");
+		var dc = document.body || document.documentElement
+		box.onmousedown = function(e) {
+			e = mouseEvent(e);
+			var startLeft = e.pageX;
+			var startTop = e.pageY;
+			var boxLeft = this.offsetLeft
+			var boxTop = this.offsetTop;
+			var dLeft = startLeft - boxLeft;
+			var dTop = startTop - boxTop;
+			dc.onmousemove = function(e) {
+				e = mouseEvent(e);
+				box.style.left = e.pageX - dLeft + 'px';
+				box.style.top = e.pageY - dTop + 'px';
+			}
+		}
+		box.onmouseup = function(e) {
+			e = mouseEvent(e);
+			dc.onmousemove = null;
+		}
+		function mouseEvent(e) {
+			e = e || window.event;
+			if (!e.pageX) {
+				e.target = e.target || e.srcElement;
+				e.pageX = e.clientX + (document.body.clientLeft || document.documentElement.clientLeft);
+				e.pageY = e.clientY + (document.body.clientTop || document.documentElement.clientTop)
+				e.preventDefault = function() {
+					e.returnValue = false;
+				}
+				e.stopPropagatio = function() {
+					e.cancelBubble = true;
+				}
+			}
+			return e;
+		}
+	</script>
+
+</html>
