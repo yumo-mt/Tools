@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>原生js分页插件</title>
+</head>
+<body>
+<style>
+    *{ margin:0; padding:0; list-style:none;}
+    a{ text-decoration:none;}
+    a:hover{ text-decoration:none;}
+    .pageList{padding: 15px 20px;text-align: left;color: #ccc;}
+    .pageList a{display: inline-block;color: #428bca;display: inline-block;height: 25px;	line-height: 25px;	padding: 0 10px;border: 1px solid #ddd;	margin: 0 2px;border-radius: 4px;vertical-align: middle;}
+    .pageList a:hover{text-decoration: none;border: 1px solid #428bca;}
+    .pageList span.current{display: inline-block;height: 25px;line-height: 25px;padding: 0 10px;margin: 0 2px;color: #fff;background-color: #428bca;	border: 1px solid #428bca;border-radius: 4px;vertical-align: middle;}
+    .pageList span.disabled{	display: inline-block;height: 25px;line-height: 25px;padding: 0 10px;margin: 0 2px;	color: #bfbfbf;background: #f2f2f2;border: 1px solid #bfbfbf;border-radius: 4px;vertical-align: middle;}
+</style>
+<pre>
+    返回：application/json
+
+            count : 总计结果数
+            list : array[] 当前结果列表
+
+    接口类型:
+        {
+            count:250,
+            list:[{},{}]
+        }
+</pre>
+<div class="pageList" id="pageList"></div>
+<script>
+    //数据初始值
+    var count = 250;//总数量
+    var limit = 10;//每页显示的条数
+    var currentPage = 10;//当前页数
+    var pageCount = Math.ceil(count/limit);// 总页数
+    createPage(currentPage,pageCount)
+
+    //创建DOM列表
+    function createPage(currentPage,pageCount) {
+        var listFrame = '';
+        if(currentPage>1){
+            listFrame += '<a href="javascript:;" class="prevPage">上一页</a>';
+        }else{
+            listFrame+='<span class="disabled">上一页</span>'
+        }
+        if(currentPage!=1&&currentPage>=4&&pageCount!=4){
+            listFrame+='<a href="javascript:;">1</a>';
+        }
+        if(currentPage>4 && currentPage<=pageCount &&pageCount>5){
+            listFrame+='<span>...</span>';
+        }
+        var start = currentPage -2,end = currentPage+2;
+        if((start > 1 && currentPage < 4)||currentPage == 1){
+            end+=3;
+        }
+        if((start > 1 && currentPage < 4)||currentPage == 2){
+            end+=2;
+        }
+        if((start > 1 && currentPage < 4)||currentPage == 3){
+            end+=1;
+        }
+        if(currentPage > pageCount-4 && currentPage >= pageCount){
+            start--;
+        }
+        if(currentPage>pageCount-3){
+            start-=1;
+        }
+        if(currentPage>pageCount-2){
+            start-=1;
+        }
+        for (;start <= end; start++) {
+            if(start <= pageCount && start >= 1){
+                if(start != currentPage){
+                    listFrame+='<a href="javascript:;">'+start+'</a>';
+                }else{
+                    listFrame+='<span class="current">'+start+'</span>';
+                }
+            }
+        }
+        if(currentPage + 2 < pageCount - 1 && currentPage >= 1 && pageCount > 5){
+            listFrame+='<span>...</span>';
+        }
+        if(currentPage!= pageCount && currentPage < pageCount -2  && pageCount != 4){
+            listFrame+='<a href="javascript:;">'+pageCount+'</a>';
+        }
+        if(currentPage<pageCount){
+            listFrame+='<a href="javascript:;" class="nextPage">下一页</a>';
+        }else {
+            listFrame+='<span class="disabled">下一页</span>';
+        }
+        document.getElementById('pageList').innerHTML=listFrame
+    }
+    var PageList = document.getElementById('pageList');
+    PageList.onclick = function (e) {
+        var labelName = e.target.tagName.toUpperCase();
+        var labelContent = e.target.innerHTML;
+        if(labelName == 'A'&& labelContent =='上一页'){
+            currentPage -= 1;
+            createPage(currentPage, pageCount);
+        }else if(labelName == 'A'&& labelContent == '下一页'){
+            currentPage += 1;
+            createPage(currentPage, pageCount);
+        }else if(labelName =='A'){
+            labelContent = parseInt(labelContent)
+            createPage(labelContent, pageCount);
+        }
+    }
+</script>
+</body>
+</html>
