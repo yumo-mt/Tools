@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0
+        }
+        li{
+            height:100px;
+            width: 100%;
+            border:1px solid saddlebrown;
+            font-size: 50px;
+        }
+        .loading{
+            height:50px;
+            background: darkcyan;
+            text-align: center;
+            text-align: center;
+        }
+        
+    </style>
+</head>
+<body>
+<ul id="list" class="list">
+    <div id="loading" class="loading">
+        <img src="http://uploadfile.huiyi8.com/2014/1023/20141023034756992.gif" alt="">
+    </div>
+</ul>
+</body>
+<script>
+    window.onload = function () {
+        var page = 1;
+        fetchData(1)
+        var list = document.getElementById('list')
+        var screenHeight =  document.documentElement.clientHeight || document.body.clientHeight
+        var loading = document.getElementById('loading');
+        var loadingHeight = parseInt(getStyle(loading,'height'))
+        var distance = offset(loading)+loadingHeight;
+        window.onscroll = function () {
+            var scrollTop = document.documentElement.scrollTop||document.body.scrollTop;
+            var port = (scrollTop+screenHeight)>=distance
+            if(port){
+                fetchData(page++);
+            }
+        }
+        function offset(curEle) {
+            var t = 0;
+            var par = curEle.offsetParent;
+            t += curEle.offsetTop;
+            while (par) {
+                if (navigator.userAgent.indexOf('MSIE 8.0') === -1) {
+                    t += par.clientTop;
+                }
+                t += par.offsetTop;
+                par = par.offsetParent;
+            }
+            return t
+        }
+        function getWin(attr) {
+            if (typeof value === 'undefined') {
+                return document.documentElement[attr] || document.body[attr];
+            }
+            document.documentElement[attr] = document.body[attr] = value;
+        }
+        function getStyle(curEle, attr) {
+            var val = null;
+            var reg = null;
+            if (window.JSON) { //高级浏览器
+                val = getComputedStyle(curEle, null)[attr];
+            } else { //低级浏览器
+                    val = curEle.currentStyle[attr];
+            }
+            return  val;
+        }
+        function fetchData(page) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('get','http://localhost:1234/data?page='+page,true);
+            xhr.onreadystatechange = function () {
+                if(xhr.readyState ===4&&/^2\d{2}$/g.test(xhr.status)){
+                    var data = xhr.responseText;
+                    data = JSON.parse(data);
+                    createHtml(data.list)
+                }
+            }
+            xhr.send()
+
+
+        }
+        function createHtml(data) {
+            var frame = document.createDocumentFragment();
+            for(var i=0;i<data.length;i++){
+                var cur = data[i];
+                var li = document.createElement('li');
+                li.innerHTML = cur.a;
+                frame.appendChild(li)
+            }
+            list.insertBefore(frame,loading)
+        }
+    }
+
+    /***
+     * 下面的是node代码
+     */
+    var express = require('express');
+    var app = express();
+    app.all('*', function(req, res, next) {
+        res.header("Access-Control-Allow-Origin", "*");
+        next();
+    });
+    app.get('/data',function (req,res) {
+        var page = req.query.page
+        res.send({count:'225',list:[{a:1},{a:2},{a:3},{a:4},{a:5},{a:6},{a:7},{a:8},{a:9},{a:10}]})
+    })
+    app.listen('1234',function () {
+        console.log('1234success')
+    })
+</script>
+</html>
