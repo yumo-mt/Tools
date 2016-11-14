@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8" />
+<title>下拉加载</title>
+<meta name="viewport" content="width=device-width,height=device-height,inital-scale=1.0,maximum-scale=1.0,user-scalable=no;" />
+<style>
+    html,body{
+        height:100%;
+        margin:0;
+        padding:0;
+    }
+    .outerScroller{
+        position: absolute;
+        top:-40px;
+        bottom:0px;
+        width:100%;
+        left:0px;
+        overflow: hidden;
+    }
+    .scroll{
+        width:100%;
+        margin-top:0px;
+        padding:0px;
+        height:100%;
+        overflow: auto;
+    }
+    .scroll li{
+        list-style-type: none;
+        height:35px;
+        background: #ccc;
+        border-bottom: solid 1px #fff;
+        text-align: left;
+        line-height: 35px;
+        padding-left:15px;
+    }
+    .loading{
+        height:44px;
+        width: 100%;
+    }
+
+    .pullToRefreshBox{
+        position: relative;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 40px;
+    }
+    .pullToRefreshBox .pullToRefreshArrow{
+        width: 1rem;
+        height: 1rem;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin-left: -0.15rem;
+        margin-top: -0.5rem;
+        background: no-repeat center;
+        background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2026%2040'%3E%3Cpolygon%20points%3D'9%2C22%209%2C0%2017%2C0%2017%2C22%2026%2C22%2013.5%2C40%200%2C22'%20fill%3D'%238c8c8c'%2F%3E%3C%2Fsvg%3E");
+        background-size: 0.65rem  1rem;
+        z-index: 11;
+        -webkit-transform: rotate(0deg) translate3d(0, 0, 0);
+        transform: rotate(0deg) translate3d(0, 0, 0);
+        -webkit-transition-duration: 300ms;
+        transition-duration: 300ms;
+    }
+    .pullToRefreshBox.up .pullToRefreshArrow{
+        -webkit-transform: rotate(180deg) translate3d(0, 0, 0);
+        transform: rotate(180deg) translate3d(0, 0, 0);
+    }
+    .pullToRefreshBox .preloader {
+        display: none;
+        width: 1rem;
+        height: 1rem;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin-left: -0.15rem;
+        margin-top: -0.5rem;
+        background: no-repeat center;
+        background-image: url("http://uploadfile.huiyi8.com/2014/1023/20141023034756992.gif");
+        background-size: 1rem  1rem;
+        z-index: 10;
+    }
+</style>
+<body>
+<div class="outerScroller" id="outerScroller">
+    <div class="pullToRefreshBox" id="pullToRefreshBox">
+        <div class="preloader" id="preloader"></div>
+        <div class="pullToRefreshArrow" id="pullToRefreshArrow"></div>
+    </div>
+    <ul id="scroll" class='scroll'>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>A</li>
+        <li>jhksdfkhj</li>
+    </ul>
+</div>
+<script>
+
+    //总盒子
+    var outerScroller = document.getElementById('outerScroller');
+    //下拉加载盒子
+    var pullToRefreshBox = document.getElementById('pullToRefreshBox');
+    //内容list
+    var scrollList = document.getElementById('scroll');
+    //加载gif图
+    var preloader = document.getElementById('preloader');
+    //上下箭头
+    var pullToRefreshArrow = document.getElementById('pullToRefreshArrow');
+
+    pullToRefresh(outerScroller,pullToRefreshBox,scrollList,preloader,pullToRefreshArrow)
+
+    /**Created by Manster on 2016/11/14.
+     *  下拉刷新方法
+     * @param outerScroller 总盒子
+     * @param pullToRefresh 下拉加载盒子
+     * @param scrollList  内容列表区
+     * @param preloader  加载gif图盒子
+     * @param pullToRefreshArrow   上下箭头盒子
+     *
+     *
+     * 布局
+     ** <div id="outerScroller">  总盒子
+             <div id="pullToRefreshBox">  下拉刷新盒子
+             <div id="preloader"></div> gif盒子
+             <div id="pullToRefreshArrow"></div> 箭头盒子
+             </div>
+             <ul> 、、
+             <li></li>
+             </ul>
+         </div>
+     */
+
+    function pullToRefresh(outerScroller,pullToRefreshBox,scrollList,preloader,pullToRefreshArrow) {
+        //设置初始touchstart时的Y轴坐标
+        var touchStart;
+        //初始总盒子的top值
+        var defaultTopVal = outerScroller.offsetTop;
+        console.log(defaultTopVal);
+        //根据需求设置一下内容list的长度
+        scrollList.style.height = document.body.clientHeight+'px'
+
+        //检查是否满足下拉状态
+        checkState(outerScroller.offsetTop)
+        scrollList.onscroll = function () {
+            var scrollListST = scrollList.scrollTop;
+            if (parseInt(scrollListST) == 0) {
+                checkState(outerScroller.offsetTop)
+            }
+        }
+        //检查是否满足下拉刷新的条件
+        function checkState(point) {
+            if(point==defaultTopVal) {
+                if(scrollList.scrollTop==0) {
+                    outerScroller.addEventListener('touchstart', startPageY, false);
+                }
+            }
+        }
+        //监听touchmove事件
+        function startPageY(e) {
+            //保存touchstart时的Y轴坐标
+            touchStart = e.targetTouches[0].pageY;
+            outerScroller.addEventListener('touchmove', checkDirection, false);
+        }
+        //检查手指滑动的方向
+        function checkDirection(e) {
+
+            /**如果显示内容不是scrollList最顶端,则不满足下拉刷新条件
+             * 这个也是检查是否满足下拉的条件,但是不能和上面的写在一起,因为我们已经开始监听touchmove事件了,
+             * 因为不满足,所以把touchmove事件的监听remove掉
+             */
+            if(scrollList.scrollTop>0){
+                outerScroller.removeEventListener('touchmove', checkDirection, false);
+                return;
+            }
+            //touchmove时,手机划过的Y坐标
+            var judegP = e.targetTouches[0].pageY;
+            //大于标示是向下滑动,开始下拉刷新,这是要监听touchmove事件来触发下拉刷新方法(pullRefresh)
+            //如果是向上滑就remove掉checkDiretion方法
+            if(judegP>touchStart){
+                outerScroller.addEventListener('touchmove', pullRefresh, false);
+                outerScroller.removeEventListener('touchmove', checkDirection, false);
+            }else{
+                outerScroller.removeEventListener('touchmove', checkDirection, false);
+            }
+        }
+        //此方法为会又touchmove调用多次,所以用来显示下拉加载盒子
+        function pullRefresh(e) {
+            //滑动期间手指在屏幕上的位置
+            var pageY = e.targetTouches[0].pageY;
+            var temp = pageY-touchStart;
+            //设置top值(多次)
+            outerScroller.style.top = defaultTopVal + temp + 'px';
+            //下箭头变成上箭头,提醒用户松手
+            if(temp>= Math.abs(defaultTopVal) ){
+                addClass(pullToRefreshBox,'up');
+            }
+            //上变下
+            else if(temp<Math.abs(defaultTopVal)){
+                removeClass(pullToRefreshBox,'up')
+            }else{
+                outerScroller.style.top = defaultTopVal+'px';
+            }
+            //如果超出默认的top值,就强制设置为默认值
+            if(parseInt(outerScroller.style.top)<defaultTopVal){
+                outerScroller.style.top = defaultTopVal+'px';
+            }
+            //touchmove过程中禁止列表的操作,可以阻止默认事件,我这里就直接hidden就没有了滚动条
+            scrollList.style.overflow = 'hidden';
+            //同时监听touchend方法
+            outerScroller.addEventListener('touchend', touchMoveEnd, false);
+        }
+        //touchend 方法,
+        function touchMoveEnd(e) {
+            // 首先remove掉touchmove事件的监听
+            outerScroller.removeEventListener('touchmove', pullRefresh, false);
+            //如果下拉程度没有到达设定的需要下拉加载的数值,就无视,但是需要将页面还原
+            if(parseInt(outerScroller.style.top)<0){
+                //未到达指定数值
+                var outTime = setInterval(function () {
+                    outerScroller.style.top= parseInt(outerScroller.style.top)-3+'px';
+                    if( parseInt(outerScroller.style.top) <= defaultTopVal){
+                        clearInterval(outTime);
+                        //因为这里设置的是每10毫秒减3px,所以设定界限,如果超出就直接变为默认值
+                        if(outerScroller.offsetTop<defaultTopVal){
+                            outerScroller.style.top = defaultTopVal+'px';
+                            //进行新一轮的监听
+                            checkState(outerScroller.offsetTop);
+                        }
+                    }
+                },10);
+                //将内容列表设置为可操作状态
+                scrollList.style.overflow = 'auto';
+                return;
+            }
+            //达到了指定的下拉加载数值
+            if(outerScroller.offsetTop>=0){
+                //用于切换加载gif
+                pullToRefreshArrow.style.display = 'none';
+                preloader.style.display = 'block'
+
+                var time = setInterval(function () {
+                    outerScroller.style.top =  outerScroller.offsetTop -3+'px';
+                    if(outerScroller.offsetTop<=0){
+                        if(outerScroller.offsetTop<defaultTopVal){
+                            outerScroller.style.top = defaultTopVal+'px';
+                        }
+                        outerScroller.style.top = 0;
+                        clearInterval(time);
+                        outerScroller.removeEventListener('touchmove', pullRefresh, false);
+                        outerScroller.removeEventListener('touchend', touchMoveEnd, false);
+                    }
+                },10)
+
+                //模仿加载数据及耗时
+                setTimeout(function () {
+                    //fetchData();
+                    fetchData()
+                    console.log('加载数据操作');
+                    //数据加载完成需要调用loadingFinish方法将页面重置
+                    loadingFinish()
+                },1000);
+            }
+        }
+
+        function loadingFinish() {
+            scrollList.style.overflow = 'auto';
+            preloader.style.display = 'none';
+            //将页面还原
+            var LFT = setInterval(function () {
+                outerScroller.style.top= parseInt(outerScroller.style.top)-3+'px';
+                if( parseInt(outerScroller.style.top) <= defaultTopVal){
+                    clearInterval(LFT);
+                    if(outerScroller.offsetTop<defaultTopVal){
+                        outerScroller.style.top = defaultTopVal+'px'
+                    }
+                    //进行新的一轮监听
+                    checkState(outerScroller.offsetTop)
+                    pullToRefreshArrow.style.display = 'block';
+                    removeClass(pullToRefreshBox,'up')
+                }
+            },10)
+        }
+
+        //辅助方法
+        //增加class
+        function addClass(curEle, strClass) {
+            //strClass 是一串字符串，可能含有多个class ，所以用正则区分开，然后放到数组中进行循环遍历。
+            var aryClass = strClass.replace(/(^\s+)|(\s+$)/g, '').split(/\s+/g);
+            for (var i = 0; i < aryClass.length; i++) {
+                var curClass = aryClass[i];
+                if (!hasClass(curEle, curClass)) {
+                    curEle.className += ' ' + curClass;
+                }
+            }
+        }
+        //removeClass:移除掉当前元素上的class名
+        function removeClass(curEle, strClass) {
+            var aryClass = strClass.replace(/(^\s+)|(\s+$)/g, '').split(/\s+/g);
+            for (var i = 0; i < aryClass.length; i++) {
+                var curClass = aryClass[i];
+                if (hasClass(curEle, curClass)) {
+                    var reg = new RegExp('(^| +)' + curClass + '( +|$)');
+                    curEle.className = curEle.className.replace(reg, ' ')
+                }
+            }
+        }
+        //判断是否含有Class
+        function hasClass(curEle, strClass) {
+            var reg = new RegExp('(\\b)' + strClass + '(\\b)');
+            return reg.test(curEle.className)
+        }
+        //页面操作,插入数据,可根据自己的需求来写
+        function fetchData(page) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('get','http://localhost:1234/data?page='+page,true);
+            xhr.onreadystatechange = function () {
+                if(xhr.readyState ===4&&/^2\d{2}$/g.test(xhr.status)){
+                    var data = xhr.responseText;
+                    data = JSON.parse(data);
+                    createHtml(data.list)
+                }
+            }
+            xhr.send()
+        }
+        function createHtml(data) {
+            var frame = document.createDocumentFragment();
+            for(var i=0;i<data.length;i++){
+                var cur = data[i];
+                var li = document.createElement('li');
+                li.innerHTML = cur.a;
+                frame.appendChild(li)
+            }
+            var temp = scrollList.firstElementChild;
+            scrollList.insertBefore(frame,temp)
+        }
+    }
+
+
+
+
+    //一下为提供数据的node代码
+   /* var express = require('express');
+    var app = express();
+    app.all('*', function(req, res, next) {
+        res.header("Access-Control-Allow-Origin", "*");
+        next();
+    });
+    app.get('/data',function (req,res) {
+        var page = req.query.page
+        res.send({count:'225',list:[{a:1},{a:22},{a:333},{a:444},{a:555},{a:666},{a:7},{a:8},{a:9},{a:10}]})
+    })
+    app.listen('1234',function () {
+        console.log('1234success')
+    })*/
+
+
+
+</script>
+</body>
+</html>
