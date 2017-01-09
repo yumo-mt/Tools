@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>p2</title>
+</head>
+<body>
+<progress id="progress" value="0"></progress>
+<button id="button">Start uploading</button>
+<span id="display"></span>
+</body>
+<script>
+    //内网测试的话速度回很快,内网的时候限制一下网速就明显了
+
+    var progressBar = document.getElementById("progress"),
+            loadBtn = document.getElementById("button"),
+            display = document.getElementById("display");
+
+    function upload(data) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://localhost:7732/", true);
+        if (xhr.upload) {
+            xhr.upload.onprogress = function(e) {
+                console.log(e);
+                if (e.lengthComputable) {
+                    progressBar.max = e.total;
+                    progressBar.value = e.loaded;
+                    display.innerText = Math.floor((e.loaded / e.total) * 100) + '%';
+                }
+            }
+            xhr.upload.onloadstart = function(e) {
+                progressBar.value = 0;
+                display.innerText = '0%';
+            }
+            xhr.upload.onloadend = function(e) {
+                progressBar.value = e.loaded;
+                loadBtn.disabled = false;
+                loadBtn.innerHTML = 'Start uploading';
+            }
+        }
+        xhr.send(data);
+    }
+
+    function buildFormData() {
+        var fd = new FormData();
+
+        for (var i = 0; i < 3000; i += 1) {
+            fd.append('data[]', Math.floor(Math.random() * 999999));
+        }
+
+        return fd;
+    }
+
+    loadBtn.addEventListener("click", function(e) {
+        this.disabled = true;
+        this.innerHTML = "Uploading...";
+        upload(buildFormData());
+    });
+
+
+    /**附上服务端 node代码
+     * var express = require('express');
+     var app = express();
+     app.all('*', function(req, res, next) {
+  console.log('1');
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "content-type");
+  next();
+});
+     app.all('/',function (req,res) {
+  var data=[]
+  for(var i=1;i<500;i++){
+    data.push({title:i})
+  }
+  console.log(data);
+    res.send(data)
+})
+     app.listen('7732',function () {
+    console.log('7732 is listen');
+})
+     */
+
+</script>
+</html>
