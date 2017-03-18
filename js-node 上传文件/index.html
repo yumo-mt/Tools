@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!--多种方式-->
+<!--第一种-->
+<input type="text" id="text">
+<br><br>
+<input type="file" id="file">
+<br><br>
+<button id="btn">发送</button>
+<script>
+  var btn = document.getElementById('btn')
+  var text = document.getElementById('text')
+  var fileBox = document.getElementById('file')
+  var formData = new FormData();
+  btn.onclick = function () {
+    var value = text.value;
+    var file = fileBox.files[0];
+    formData.append('value', value)
+    formData.append('fileContent', file)
+    var xhr = new XMLHttpRequest();
+    xhr.open('post', 'http://localhost:1121/info', true);
+    xhr.onload = function () {
+      console.log(xhr.responseText)
+    }
+    xhr.send(formData)
+  }
+</script>
+<!--第二种直接使用form表单，注意enctype为multipart/form-data-->
+<form enctype="multipart/form-data" action="http://localhost:1121/info" method="POST">
+    <input type="text" name="name" value="Manster">
+    <input type="file" name="fileContent">
+    <input type="submit" value="submit">
+</form>
+</body>
+</html>
