@@ -16,36 +16,39 @@
 		 * @param {Object} pro
 		 */
 		(function(pro) {
-			pro.myFormatTime = myFormatTime;
+  pro.myFormatTime = myFormatTime;
+  function myFormatTime(template) {
+    var temAry = {
+      1: "{0}年{1}月{2}日{3}时{4}分{5}秒",
+      2: "{0}-{1}-{2} {3}:{4}:{5}",
+      3: "{0}-{1}-{2} {3}-{4}-{5}",
+      4: "{3}时{4}分{5}秒{0}年{1}月{2}日",
+      5: "{3}:{4}:{5} {0}-{1}-{2}"
+    }
+    var ary = this.match(/\d+/g);
+    //格式化事件的模板
+    if (typeof template === 'number') {
+      template = temAry[template]
+    } else if (typeof template === 'undefined') {
+      template = temAry[1]
+    } else {
+      template = template;
+    }
+    var res = null;
+    res = template.replace(/\{(\d+)\}/g, function() {
+      var val = ary[arguments[1]];
+      !val ? val = '00' : null;
+      val.length < 2 ? val = '0' + val : null;
+      return val;
+    })
+    return res;
+  }
+})(String.prototype)
 
-			function myFormatTime(template) {
-				var temAry = {
-						1: "{0}年{1}月{2}日{3}时{4}分{5}秒",
-						2: "{0}-{1}-{2} {3}:{4}:{5}",
-						3: "{0}-{1}-{2} {3}-{4}-{5}",
-						4: "{3}时{4}分{5}秒{0}年{1}月{2}日",
-						5: "{3}:{4}:{5} {0}-{1}-{2}"
-					}
-					//this就是需要吃力并且进行格式化的时间字符串
-				var ary = this.match(/\d+/g);
-				//格式化事件的模板
-				if (typeof template === 'number') {
-					template = temAry[template]
-				} else if (typeof template === 'undefined') {
-					template = temAry[1]
-				} else {
-					template = template;
-				}
-				var res = null;
-				res = template.replace(/\{(\d+)\}/g, function() {
-					var val = ary[arguments[1]];
-					!val ? val = '00' : null;
-					val.length < 2 ? val = '0' + val : null;
-					return val;
-				})
-				return res;
-			}
-		})(String.prototype)
+
+//使用方式
+var t = '2015年1月3日5时11分23秒'.myFormatTime(2)
+//t = 2015-01-03 05:11:23
 	</script>
 
 </html>
