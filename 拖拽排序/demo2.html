@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>移动端拖拽排序</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        html,body{
+            height: 100%;
+        }
+        #app{
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 980px;
+            margin: auto;
+        }
+        .list{
+            padding:10px;
+            height: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+    </style>
+</head>
+<body>
+此 Demo 为林鑫的例子
+<div id="app">
+    <div class="main">
+        <div class="list" draggable="true">这里是列表1的标题</div>
+        <div class="list" draggable="true">这里是列表2的标题</div>
+        <div class="list" draggable="true">这里是列表3的标题</div>
+        <div class="list" draggable="true">这里是列表4的标题</div>
+        <div class="list" draggable="true">这里是列表5的标题</div>
+        <div class="list" draggable="true">这里是列表6的标题</div>
+        <div class="list" draggable="true">这里是列表7的标题</div>
+    </div>
+</div>
+<script src="http://timruffles.github.io/ios-html5-drag-drop-shim/ios-drag-drop.js"></script>
+<script>
+  var iosDragDropShim = { enableEnterLeave: true }                // 兼容移动端
+
+
+
+
+  var source = document.querySelectorAll('.list'),
+    recycle = document.getElementById('recycle'),
+    dragElement = null,                                         // 用于存放拖动元素
+    lock = true;                                                // 最后元素拖放拖放时会进入enter和leave的循环，用来锁住
+
+  for(var i = 0; i < source.length; i++){
+    source[i].addEventListener('dragstart',function(ev){
+      dragElement = this;                                     // 用于存放拖动元素
+      this.style.backgroundColor = 'red';                 // 设置拖动元素的背景
+    },false);
+
+    source[i].addEventListener('dragend',function(ev){
+      ev.target.style.backgroundColor = '#fff';               // 拖放结束还原拖动元素的背景
+      ev.preventDefault();
+    },false)
+
+    source[i].addEventListener('dragenter', function(ev){
+      if(dragElement != this){
+        this.parentNode.insertBefore(dragElement,this);     // 把拖动元素添加到当前元素的前面
+      }
+    }, false)
+
+    source[i].addEventListener('dragleave', function(ev){
+      if(dragElement != this){
+        if(lock && (this == this.parentNode.lastElementChild || this == this.parentNode.lastChild)){    // 当前元素时最后一个元素
+          this.parentNode.appendChild(dragElement);       // 把拖动元素添加最后面
+          lock = false;
+        }else{
+          lock = true;
+        }
+      }
+    }, false)
+  };
+
+  recycle.addEventListener('drop', function(ev){                  // 拖进回收站则删除该元素
+    dragElement.parentNode.removeChild(dragElement);
+  }, false)
+
+  document.ondragover = function(e){e.preventDefault();}          // 必须设置dragover阻止默认事件
+  document.ondrop = function(e){e.preventDefault();}
+</script>
+</body>
+</html>

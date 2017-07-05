@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PC端-拖拽排序</title>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0
+    }
+
+    html, body {
+        height: 100%;
+    }
+
+    .out {
+        height: 800px;
+        width: 700px;
+        border: 1px solid darkblue;
+        margin: auto;
+    }
+
+    .box {
+        width: 100%;
+        height: 100%;
+    }
+
+    .box li {
+        margin: 20px;
+        font-size: 20px;
+        display: block;
+        height: 50px;
+        line-height: 40px;
+        border: 1px solid darkgoldenrod;
+        width: 200px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+
+</style>
+<body>
+
+
+<div class="out">
+
+    <ul id="box" class="box">
+        <li draggable="true">1</li>
+        <li draggable="true">2</li>
+        <li draggable="true">3</li>
+        <li draggable="true">4</li>
+        <li draggable="true">5</li>
+        <li draggable="true">6</li>
+        <li draggable="true">7</li>
+        <li draggable="true">8</li>
+        <li draggable="true">9</li>
+        <li draggable="true">10</li>
+    </ul>
+</div>
+<script>
+  var box = document.getElementById('box');
+  var list = document.getElementsByTagName('li');
+
+  //新建一个临时元素
+  var nLi = document.createElement('li');
+  nLi.className = 'nLi';
+  nLi.style.height = '50px';
+  nLi.style.width = '200px';
+  nLi.style.border = '1px dashed red';
+
+
+  // 用于存放拖拽元素
+  var sourceElement;
+
+  //事件绑定
+  for (var i = 0; i < list.length; i++) {
+    var ele = list[i]; // 每一个元素
+    ele.addEventListener('dragstart', function (e) {
+      sourceElement = this;
+      this.style.background = 'rgba(0,0,0,0.2)'
+    }, false);
+
+    ele.addEventListener('dragenter', function (e) {
+      // 如果是当前元素就忽视
+      if (this == sourceElement) {
+        return false
+      }
+      //避开下一个元素
+      if (this != sourceElement.nextElementSibling) {
+        this.parentNode.insertBefore(nLi, this)
+      }
+    }, false)
+
+    ele.addEventListener('dragend', function (e) {
+      var temp = document.getElementsByClassName('nLi')[0];
+      this.style.background = "#fff";
+      //将占位框和目标元素进行替换
+      this.parentNode.replaceChild(sourceElement, temp)
+    }, false)
+//可以添加在最后
+    ele.addEventListener('dragleave', function (e) {
+      if (this == (this.parentNode.lastChild && this.parentNode.lastElementChild)) {
+        this.parentNode.appendChild(nLi)
+      }
+    }, false)
+  }
+  document.ondragover = function (e) {
+    e.preventDefault();
+  }
+  document.ondrop = function (e) {
+    e.preventDefault();
+  }
+
+</script>
+
+</body>
+</html>
