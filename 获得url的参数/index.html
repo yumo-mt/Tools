@@ -29,8 +29,8 @@
 			}
 			//第二种正则的方式
 			var obj = {};
-			str.replace(/([^?=&#]+)=([^?=&#]+)/g, function() {
-				obj[arguments[1]] = arguments[2];
+			str.replace(/([^?=&#]+)=([^?=&#]+)/g, function(origin,key,value) {
+				obj[key] = value;
 			});
 			//第三种，腾讯体育的方式
 			var url = location.search,
